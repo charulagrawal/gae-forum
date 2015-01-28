@@ -16,8 +16,8 @@ class Post_handler(webapp2.RequestHandler):
 		comments = Comment.query(post=self.get_argument).fetch()
 
 		template_values = {
-            'comments': comments,
-        }
+        	'comments': comments,
+    	}
 
 		template = JINJA_ENVIRONMENT.get_template('templates/comments.html')
 		self.response.write(template.render({template_values}))
