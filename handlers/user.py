@@ -52,13 +52,14 @@ class User_Handler(webapp2.RequestHandler):
     	notifications = Notification.query(recepient=some_key)
     						.order(-timestamp).fetch()
     	for notification in notifications:
-    		user = notification.doer[-1].get()
+    		user1 = notification.doer[-1].get()
+            user2 = notification.doer[0].get()
     		size = len(notification.doer)
     		card = notification.card.get()
     		
     		if notification.action == 'upvoted' or notification.action == 'followed':
     			if size > 1:
-    				self.response.write(user+' and '+size+' more people have '+notification.action+' your '
+    				self.response.write(user1+','+user2+' and '+size+' more people have '+notification.action+' your '
     					+notification.type+card.content)
     			else:
     				self.response.write(user+' has '+notification.action+' your '
@@ -66,7 +67,7 @@ class User_Handler(webapp2.RequestHandler):
     		
     		elif notification.action == 'commented':
     			if size > 1:
-    				self.response.write(user+' and '+size+' more people have '+notification.action+' on your '
+    				self.response.write(user1+','+user2+' and '+size+' more people have '+notification.action+' on your '
     					+notification.type+card.content))
 				else:
     				self.response.write(user+' has '+notification.action+' on your '
