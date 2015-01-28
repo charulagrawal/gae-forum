@@ -1,6 +1,5 @@
 from google.appengine.ext import ndb
 
-
 class User(ndb.Model):
 	username = ndb.StringProperty(required=True)
 	email = ndb.StringProperty(required=True)
@@ -27,7 +26,6 @@ class Tag(ndb.Model):
 class Post(ndb.Model):
 	title = ndb.StringProperty(required=True)
 	author = ndb.KeyProperty(kind=User)
-	date = ndb.DateTimeProperty(auto_now_add=True)
 	content = ndb.TextProperty(required=True)	
 	thread = ndb.KeyProperty(kind=Thread)
 	timestamp = ndb.KeyProperty(auto_now_add=True)
@@ -36,19 +34,27 @@ class Post(ndb.Model):
 	upvotes = ndb.IntegerProperty(0)
 	downvotes = ndb.IntegerProperty(0)
 	
-	def increment_counter(self):
+	def increment_upvotes_counter(self):
 		self.upvotes += 1
 
-	def decrement_counter(self):
-		self.downvotes += 1
+	def decrement_upvotes_counter(self):
+		self.upvotes -= 1
 
-	def total_votes(self):
+	def increment_downvotes_counter(self):
+		self.upvotes += 1
 
+	def decrement_downvotes_counter(self):
+		self.downvotes -= 1
+
+	def total_score(self):
 		if upvotes > downvotes:
 			return upvotes - downvotes
 
 		else:
 			return 0
+
+	def total_votes(self):
+		return upvotes + downvotes
 
 class Comment(ndb.Model):
 	post = ndb.KeyProperty(kind=Post)
@@ -60,14 +66,19 @@ class Comment(ndb.Model):
 	upvotes = ndb.IntegerProperty(0)
 	downvotes = ndb.IntegerProperty(0)
 	
-	def increment_counter(self):
+	def increment_upvotes_counter(self):
+		self.upvotes += 1
+		
+	def decrement_upvotes_counter(self):
+		self.upvotes -= 1
+
+	def increment_downvotes_counter(self):
 		self.upvotes += 1
 
-	def decrement_counter(self):
-		self.downvotes += 1
+	def decrement_downvotes_counter(self):
+		self.downvotes -= 1
 
 	def total_votes(self):
-
 		if upvotes > downvotes:
 			return upvotes - downvotes
 
@@ -77,9 +88,26 @@ class Comment(ndb.Model):
 class Follow(ndb.Model):
 	user = ndb.KeyProperty(kind=User)
 	timestamp = ndb.DateTimeProperty(auto_now_add=True)
+	choices = ndb.StringProperty(['User', 'Thread'])
 	card = ndb.KeyProperty()
 
-class Vote(ndb.Model):
+class Vote(ndb.Model): 
 	user = ndb.KeyProperty(kind=User)
 	timestamp = ndb.DateTimeProperty(auto_now_add=True)
+	vote_type =  ndb.StringProperty(['upvote', 'downvote'])
+	choices = ndb.StringProperty(['Post', 'Comment'])
 	card = ndb.KeyProperty()
+
+class Notification(ndb.Model):
+	''' action can be upvote, comment, follow '''
+	action = ndb.StringProperty(required=True, 
+		['upvoted', 'commented', 'followed'])
+	''' type can be upvote -> comment or post, comment -> post, 
+		follow -> user '''
+	type = ndb.StringProperty(['comment', 'post', 'user'])
+	card = ndb.KeyProperty()
+	doer = ndb.KeyProperty(kind=User, repeated=True)
+	recepient = ndb.KeyProperty(kind=User)
+	timestamp = ndb.DateTimeProperty()
+
+
