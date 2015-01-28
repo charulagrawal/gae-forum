@@ -41,7 +41,12 @@ class Votes_Handler():
 								ent.author, vote.timestamp)
 						notification.put()
 					else:
+						# limiting the size of doer list to 2
+						size = len(q1.doer)
+						if size == 2:
+							q1.doer.pop(0)
 						q1.doer.append(vote.user)
+						q1.count += 1
 						q1.timestamp = vote.timestamp
 						q1.put()
 
@@ -49,19 +54,23 @@ class Votes_Handler():
 		else:
 			vote.put()
 			card_entity = vote.card.get()
-			
+
 			if vote.vote_type == 'upvote':
 				card_entity.increment_upvotes_counter()
 				card_entity.put()
 				# check if the upvote activity is already done on that card
 				q1 = Notification.query(action='upvoted', card = vote.card)
-				if q1 ==	None:
+				if q1 == None:
 					notification = Notification('upvote', vote.choices, 
 								vote.card, vote.user,
 								card_entity.author, vote.timestamp)
 					notification.put()
 				else:
+						size = len(q1.doer)
+						if size == 2:
+							q1.doer.pop(0)
 						q1.doer.append(vote.user)
+						q1.count += 1
 						q1.timestamp = vote.timestamp
 						q1.put()
 

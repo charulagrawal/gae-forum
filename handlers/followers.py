@@ -12,11 +12,21 @@ class Followers_Handler(webapp2.RequestHandler):
 		follow.put()
 
 		if follow.choices == 'User':
-			# create notification object
-			notification = Notification('followed', 'user', 
+			q1 = Notification.query(action='followed', card = comment.post)
+			if q1 == None:
+				# create notification object
+				notification = Notification('followed', 'user', 
 								follow.card, follow.user,
 								follow.card, follow.timestamp)
-			notification.put()
+				notification.put()
+			else:
+				size = len(q1.doer)
+				if size == 2:
+					q1.doer.pop(0)
+				q1.doer.append(Follow.user)
+				q1.timestamp = comment.timestamp
+				q1.count += 1
+				q1.put()
 
 	def delete(self, user, card):
 		follow = Follow.query(user=user, card=card).get()

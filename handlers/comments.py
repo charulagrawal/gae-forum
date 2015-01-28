@@ -22,18 +22,21 @@ class Comment_Handler(self):
 		comment.author = self.request.get('author', None)
 		comment.put()
 
-		# create notification object
-		notification = Notification()
-		notification.action = 'commented'
-		notification.type = 'post'
-		notification.card = comment.post
-		notification.doer = comment.author
-		post = comment.post.get()
-		notification.recepient = post.author
-		notification.timestamp = comment.timestamp
-		notification.put()
-
-
+		q1 = Notification.query(action='commented', card = comment.post)
+		if q1 == None:
+			post = comment.post.get()
+			# create notification object
+			notification = Notification('commented', 'post', comment.post, 
+							comment.author, post.author, comment.timestamp)
+			notification.put()
+		else:
+			size = len(q1.doer)
+			if size == 2:
+				q1.doer.pop(0)
+			q1.doer.append(comment.author)
+			q1.timestamp = comment.timestamp
+			q1.count += 1
+			q1.put()
 
 	def delete(self):
 		comment = Comment.query(post=self.get_argument, 
