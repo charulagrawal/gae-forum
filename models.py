@@ -107,6 +107,7 @@ class Notification(ndb.Model):
 	type = ndb.StringProperty(['comment', 'post', 'user'])
 	card = ndb.KeyProperty()
 	doer = ndb.KeyProperty(kind=User, repeated=True)
+	count = ndb.IntegerProperty
 	recepient = ndb.KeyProperty(kind=User)
 	timestamp = ndb.DateTimeProperty()
 
