@@ -10,7 +10,7 @@ handlers:
   static_dir: stylesheets
 
 - url: /.*
-  script: forum.application
+  script: main.application
 # [END handlers]
 
 # [START libraries]

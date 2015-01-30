@@ -1,3 +1,15 @@
+import urllib
+
+from models import *
+
+import jinja2
+import webapp2
+
+JINJA_ENVIRONMENT = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
+    extensions=['jinja2.ext.autoescape'],
+    autoescape=True)
+
 '''handles creation of user, its deletion 
 	and fetches posts created by user'''
 class User_Handler(webapp2.RequestHandler):
@@ -24,13 +36,6 @@ class User_Handler(webapp2.RequestHandler):
 
 		posts = Post.query(author=self.get_argument).fetch()
 
-		template_values = {
-            'posts': posts,
-        }
-
-        template = JINJA_ENVIRONMENT.get_template('posts.html')
-        self.response.write(template.render(template_values))
-
     def votes(self):
     	# queries all the posts voted by user
 		upvotes= Vote.query(ndb.AND(user=some_key, 
@@ -40,13 +45,6 @@ class User_Handler(webapp2.RequestHandler):
 			post_keys.append(upvote.card)
 
 		posts = ndb.get_multi_async(post_keys)
-
-		template_values = {
-            'posts': posts,
-        }
-
-        template = JINJA_ENVIRONMENT.get_template('posts.html')
-        self.response.write(template.render(template_values))
 
     def notification(self):
     	notifications = Notification.query(recepient=some_key)

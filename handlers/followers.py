@@ -1,4 +1,16 @@
 
+import urllib
+
+from models import *
+
+import jinja2
+import webapp2
+
+JINJA_ENVIRONMENT = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
+    extensions=['jinja2.ext.autoescape'],
+    autoescape=True)
+
 ''' create a follower, delete it
 	and displays followers for a card'''
 class Followers_Handler(webapp2.RequestHandler):
@@ -6,13 +18,14 @@ class Followers_Handler(webapp2.RequestHandler):
 	def post(self):
 		follow = Follow()
 		follow.user = self.request.get('user')
-		follow.choices = self.request.get('choices', 'User')
+		follow.choices = self.request.get('choices', 'user')
 		follow.card = self.request.get('card', None)
 		follow.timestamp = time.now()
 		follow.put()
 
-		if follow.choices == 'User':
-			q1 = Notification.query(action='followed', card = comment.post)
+		if follow.choices == 'user':
+			q1 = Notification.query(action='followed', 
+					card=comment.post)
 			if q1 == None:
 				# create notification object
 				notification = Notification('followed', 'user', 
@@ -40,9 +53,3 @@ class Followers_Handler(webapp2.RequestHandler):
 		# get user entity from user key
 		users = ndb.get_multi_async(user_keys)
 		
-		template_values = {
-			'users' = users,
-		}
-
-		template = JINJA_ENVIRONMENT.get_template('templates/followers.html')
-		self.response.write(template.render({template_values}))

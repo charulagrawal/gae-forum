@@ -20,6 +20,7 @@ class Comment_Handler(self):
 		comment.timestamp = time.now()
 		comment.content = self.request.get('content', None)
 		comment.author = self.request.get('author', None)
+		comment.upvotes = comment.downvotes = 0
 		comment.put()
 
 		q1 = Notification.query(action='commented', card = comment.post)
