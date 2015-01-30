@@ -116,3 +116,9 @@ class Notification(ndb.Model):
 	count = ndb.IntegerProperty()
 	recepient = ndb.KeyProperty(kind=User)
 	timestamp = ndb.DateTimeProperty()
+
+class Followers(ndb.Model):
+	x = ndb.IntegerProperty()
+	y = ndb.IntegerProperty()
+
+
