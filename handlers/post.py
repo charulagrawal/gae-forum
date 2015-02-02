@@ -10,9 +10,10 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
+# /posts/<post_id>
 ''' handles creation of post, deletion 
 	and displays all the comments in a thread '''
-class Post_handler(webapp2.RequestHandler):
+class Post_Handler(webapp2.RequestHandler):
 
 	def post(self):
 		post = Post()
@@ -28,6 +29,6 @@ class Post_handler(webapp2.RequestHandler):
 		post = Post.query(title = title, author=author).get()
 		post.delete()
 
-	def get(self):
-		comments = Comment.query(post=self.get_argument).fetch()
+	def get(self, post_id):
+		comments = Comment.query(post=post_id).fetch()
 		

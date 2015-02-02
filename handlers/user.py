@@ -10,6 +10,13 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
+# /users
+# display all the users 
+class All_Users_Handler(webapp2.RequestHandler):
+    def get(self):
+        users = User.query().fetch()
+
+# handler: /users/some_id
 '''handles creation of user, its deletion 
 	and fetches posts created by user'''
 class User_Handler(webapp2.RequestHandler):
@@ -26,18 +33,15 @@ class User_Handler(webapp2.RequestHandler):
 			email = email).get()
 		user.delete()
 
-	# fetch all the posts	 made by a user
-	def get(self):
-		action = self.request.get('action', None)
-		if action == 'votes':
-			self.votes()
-		if action == 'notification':
-			self.notification()
+	# fetch all the posts made by a user
+	def get(self, user_id):
+		posts = Post.query(author=user_id).fetch()
 
-		posts = Post.query(author=self.get_argument).fetch()
-
-    def votes(self):
-    	# queries all the posts voted by user
+# /users/<user_id>/votes
+# queries all the posts voted by user
+class User_Votes_Handler(webapp2.RequestHandler):    
+    def get(self, user_id):
+    	
 		upvotes= Vote.query(ndb.AND(user=some_key, 
 			choices='Post', vote_type='upvote')).fetch()
 		post_keys=[]
@@ -46,7 +50,10 @@ class User_Handler(webapp2.RequestHandler):
 
 		posts = ndb.get_multi_async(post_keys)
 
-    def notification(self):
+# /users/<user_id>/notifications
+# get all the notifications for a user
+class User_Notifications_Handler(webapp2.RequestHandler):
+    def get(self, user_id):
     	notifications = Notification.query(recepient=some_key)
     						.order(-timestamp).fetch()
     	for notification in notifications:

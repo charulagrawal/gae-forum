@@ -5,14 +5,16 @@ from models import *
 import jinja2
 import webapp2
 
+
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
+# /thread/thread_id
 ''' handles creation of thread, its deletion
 	and displays all the posts in a thread '''
-class Thread_handler(webapp2.RequestHandler):
+class Thread_Handler(webapp2.RequestHandler):
 
 	def post(self):  
 		thread = Thread()
@@ -26,6 +28,6 @@ class Thread_handler(webapp2.RequestHandler):
 		thread = Thread.query(title = title).get()
 		thread.delete()
 
-	def get(self):
-		posts = Post.query(thread=self.get_argument).fetch()
+	def get(self, thread_id):
+		posts = Post.query(thread=thread_id).fetch()
 		
