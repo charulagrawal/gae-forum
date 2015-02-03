@@ -1,6 +1,7 @@
 import os
 import urllib
 
+from google.appengine.api import taskqueue
 from models import *
 
 import jinja2
@@ -12,35 +13,23 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     autoescape=True)
 
 ''' handles creation of a comment and its deletion'''
-class Comment_Handler(self):
+class Comment_Handler(webapp2.RequestHandler):
 	def post(self):
 		# create comment object
 		comment = Comment()
-		comment.post = self.request.get('post', None)
-		comment.timestamp = time.now()
-		comment.content = self.request.get('content', None)
 		comment.author = self.request.get('author', None)
+		comment.timestamp = time.now()
+		comment.card = self.request.get('card', None)
+		comment.content = self.request.get('content', None)	
 		comment.upvotes = comment.downvotes = 0
 		comment.put()
 
-		q1 = Notification.query(action='commented', card = comment.post)
-		if q1 == None:
-			post = comment.post.get()
-			# create notification object
-			notification = Notification('commented', 'post', comment.post, 
-							comment.author, post.author, comment.timestamp)
-			notification.put()
-		else:
-			size = len(q1.doer)
-			if size == 2:
-				q1.doer.pop(0)
-			q1.doer.append(comment.author)
-			q1.timestamp = comment.timestamp
-			q1.count += 1
-			q1.put()
+		taskqueue.add(url='/notification', 
+			params={'action': 'commented', 'type': 'post', 'card': comment})
+
 
 	def delete(self):
-		comment = Comment.query(post=self.get_argument, 
+		comment = Comment.query(card=self.get_argument, 
 					author=self.get_argument).fetch()
 		comment.delete()
 

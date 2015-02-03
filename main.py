@@ -11,4 +11,5 @@ routes = [
 	webapp2.Route('/posts/<post_id>', post.Post_Handler), 
 	webapp2.Route('/<card_type>/<card_id>/followers', follower.Followers_Handler)
 	webapp2.Route('/<card_type>/<card_id>/votes', vote.Votes_Handler)
+	webapp2.Route('/notification', notification.Notification_Handler)
 	]
