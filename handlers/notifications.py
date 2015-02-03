@@ -23,11 +23,12 @@ class Notification_Handler(webapp2.RequestHandler):
 		q1 = Notification.query(action=action, card = card_key)
 
 		if q1 == None:
-			if action=='commented':
-				post = card.card.get()
-				recepient = post.author
+			if action=='commented' or action=='upvoted':
+				ent = card.card.get()
+				recepient = ent.author
 			if action=='followed':
 				recepient = card.card
+
 			# create notification object
 			notification = Notification(action, type, card.card, 
 							card.author, 0, recepient, card.timestamp)
