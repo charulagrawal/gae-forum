@@ -61,11 +61,11 @@ class Post(ndb.Model):
 
 
 class Comment(ndb.Model):
-	post = ndb.KeyProperty(kind=Post)
-	timestamp = ndb.DateTimeProperty(auto_now_add=True)
-	content = ndb.TextProperty(required=True)
 	author = ndb.KeyProperty(kind=User)
-
+	timestamp = ndb.DateTimeProperty(auto_now_add=True)
+	card = ndb.KeyProperty(kind=Post)
+	content = ndb.TextProperty(required=True)
+	
 	# counter to store upvote count 
 	upvotes = ndb.IntegerProperty()
 	downvotes = ndb.IntegerProperty()
@@ -91,18 +91,20 @@ class Comment(ndb.Model):
 	
 
 class Follow(ndb.Model):
-	user = ndb.KeyProperty(kind=User)
+	author = ndb.KeyProperty(kind=User)
 	timestamp = ndb.DateTimeProperty(auto_now_add=True)
-	choices = ndb.StringProperty(choices=['user', 'thread'])
 	card = ndb.KeyProperty()
+	choices = ndb.StringProperty(choices=['user', 'thread'])
+	
 
 
 class Vote(ndb.Model): 
-	user = ndb.KeyProperty(kind=User)
+	author = ndb.KeyProperty(kind=User)
 	timestamp = ndb.DateTimeProperty(auto_now_add=True)
+	card = ndb.KeyProperty()
 	vote_type =  ndb.StringProperty(choices=['upvote', 'downvote'])
 	choices = ndb.StringProperty(choices=['Post', 'Comment'])
-	card = ndb.KeyProperty()
+	
 
 
 class Notification(ndb.Model):
