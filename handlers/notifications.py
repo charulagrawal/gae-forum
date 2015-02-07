@@ -33,6 +33,9 @@ class Notification_Handler(webapp2.RequestHandler):
 			notification = Notification(action, type, card.card, 
 							card.author, 0, recepient, card.timestamp)
 			notification.put()
+			user_id = receipient.get()
+			msg = message(notification)
+			channel.send_message('/user', user_id, msg)
 		else:
 			size = len(q1.doer)
 			if size == 2:
@@ -41,3 +44,15 @@ class Notification_Handler(webapp2.RequestHandler):
 			q1.timestamp = card.timestamp
 			q1.count += 1
 			q1.put()
+
+    def message(self, notification):
+    	if notification.action == 'upvoted' or notification.action == 'followed':
+    		return (notification.doer+' has '+notification.action+' your '
+    			+notification.type+card.content)
+    		
+    	elif notification.action == 'commented':
+    		return (notification.doer+' has '+notification.action+' on your '
+    			+notification.type+card.content)
+
+
+			

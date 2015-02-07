@@ -1,7 +1,9 @@
-import urllib
+import os
 
+from google.appengine.api import channel
 from models import *
 
+import urllib
 import jinja2
 import webapp2
 
@@ -28,6 +30,8 @@ class User_Handler(webapp2.RequestHandler):
 		user.password = self.request.get('password', None)
 		user.put()
 
+        token = channel.create_channel(user.key())
+        
 	def delete(self, username, email):
 		user = User.query(username = username, 
 			email = email).get()
@@ -50,34 +54,7 @@ class User_Votes_Handler(webapp2.RequestHandler):
 
 		posts = ndb.get_multi_async(post_keys)
 
-# /users/<user_id>/notifications
-# get all the notifications for a user
-class User_Notifications_Handler(webapp2.RequestHandler):
-    def get(self, user_id):
-    	notifications = Notification.query(recepient=some_key)
-    						.order(-timestamp).fetch()
-    	for notification in notifications:
-    		user1 = notification.doer[-1].get()
-            user2 = notification.doer[0].get()
-    		size = len(notification.doer)
-    		card = notification.card.get()
-    		
-    		if notification.action == 'upvoted' or notification.action == 'followed':
-    			if size > 1:
-    				self.response.write(user1+','+user2+' and '+size+' more people have '+notification.action+' your '
-    					+notification.type+card.content)
-    			else:
-    				self.response.write(user+' has '+notification.action+' your '
-    					+notification.type+card.content)
-    		
-    		elif notification.action == 'commented':
-    			if size > 1:
-    				self.response.write(user1+','+user2+' and '+size+' more people have '+notification.action+' on your '
-    					+notification.type+card.content))
-				else:
-    				self.response.write(user+' has '+notification.action+' on your '
-    					+notification.type+card.content)
-			
+
 
 
 

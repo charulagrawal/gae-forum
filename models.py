@@ -94,8 +94,7 @@ class Follow(ndb.Model):
 	author = ndb.KeyProperty(kind=User)
 	timestamp = ndb.DateTimeProperty(auto_now_add=True)
 	card = ndb.KeyProperty()
-	choices = ndb.StringProperty(choices=['user', 'thread'])
-	
+	choices = ndb.StringProperty(choices=['user', 'thread'])	
 
 
 class Vote(ndb.Model): 
@@ -105,7 +104,6 @@ class Vote(ndb.Model):
 	vote_type =  ndb.StringProperty(choices=['upvote', 'downvote'])
 	choices = ndb.StringProperty(choices=['Post', 'Comment'])
 	
-
 
 class Notification(ndb.Model):
 	''' action can be upvote, comment, follow '''
@@ -118,6 +116,7 @@ class Notification(ndb.Model):
 	count = ndb.IntegerProperty()
 	recepient = ndb.KeyProperty(kind=User)
 	timestamp = ndb.DateTimeProperty()
+	url = ndb.StringProperty()
 
 class Followers(ndb.Model):
 	x = ndb.IntegerProperty()
